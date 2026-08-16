@@ -1,4 +1,4 @@
-name: Build AAB Auto V2
+name: Build AAB Auto V3 - Direct ZIP Upload
 on:
   push:
   workflow_dispatch:
@@ -17,6 +17,19 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+
+      - name: Unzip if ZIP uploaded
+        run: |
+          if ls *.zip 1> /dev/null 2>&1; then
+            echo "ZIP found, unzipping..."
+            unzip -o "*.zip" || unzip -o *.ZIP || true
+            for f in *.zip; do unzip -o "$f"; done
+            rm -f *.zip || true
+            ls -la
+          fi
+          if [ -d "earning-live-FIXED" ]; then
+            mv earning-live-FIXED/* . || true
+          fi
 
       - name: Install dependencies
         run: |
